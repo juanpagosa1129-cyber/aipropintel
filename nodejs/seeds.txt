@@ -1,0 +1,3 @@
+# Formato: un radicado por linea, o tipo,valor
+# Ejemplo:
+# radicado,11001310300120230012300
