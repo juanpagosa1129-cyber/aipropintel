@@ -1,0 +1,3 @@
+numero_proceso,juzgado,ciudad,direccion,tipo_proceso,estado,avaluo,edad_meses,demandados,acreedores,matricula_inmobiliaria,lat,lng
+11001310301820210042100,Juzgado 18 Civil Circuito,Bogota,Calle 93 # 14-20,Ejecutivo hipotecario,Avaluo aprobado,960000000,42,2,1,50C-123456,4.676,-74.048
+05001310300720200087700,Juzgado 7 Civil Circuito,Medellin,Carrera 43A # 7-50,Ejecutivo singular,Embargo inscrito,620000000,33,3,2,001-654321,6.209,-75.567

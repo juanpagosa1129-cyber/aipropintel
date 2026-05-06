@@ -1,0 +1,10 @@
+services:
+  propintel:
+    build: .
+    container_name: propintel_ia
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - .env.example

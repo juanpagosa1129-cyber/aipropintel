@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10231f" />
+    <title>Propintel IA</title>
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">PI</div>
+          <div>
+            <strong>Propintel IA</strong>
+            <small>Inteligencia judicial inmobiliaria</small>
+          </div>
+        </div>
+
+        <div class="search-hint">
+          <span>Estado API</span>
+          <strong id="health">Conectando...</strong>
+        </div>
+
+        <nav class="main-nav">
+          <button class="nav active" data-view="dashboard">Panel ejecutivo</button>
+          <button class="nav" data-view="live">Busqueda oficial en vivo</button>
+          <button class="nav" data-view="opportunities">Oportunidades</button>
+          <button class="nav" data-view="map">Mapa GIS Colombia</button>
+          <button class="nav" data-view="alerts">Alertas</button>
+          <button class="nav" data-view="watchlists">Watchlists</button>
+          <button class="nav" data-view="business">Modelo de negocio</button>
+          <button class="nav" data-view="processes">Registrar proceso</button>
+          <button class="nav" data-view="import">Importar CSV</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Operacion 2026 Colombia · datos publicos · trazabilidad oficial</p>
+            <h1 id="title">Panel ejecutivo</h1>
+          </div>
+          <div class="top-actions">
+            <button id="refresh">Actualizar</button>
+            <button class="primary" id="run-bot">Ejecutar bot ahora</button>
+          </div>
+        </header>
+
+        <section class="view active" id="dashboard">
+          <div class="kpi-grid">
+            <article><span>Procesos</span><strong id="m-total">0</strong></article>
+            <article><span>Georreferenciados</span><strong id="m-geo">0</strong></article>
+            <article><span>Riesgo medio</span><strong id="m-risk">0%</strong></article>
+            <article><span>Alertas criticas</span><strong id="m-alerts">0</strong></article>
+          </div>
+
+          <div class="grid two">
+            <section class="card">
+              <div class="head">
+                <h2>Fuente oficial</h2>
+                <span id="source-tag" class="status neutral">sin datos</span>
+              </div>
+              <p id="source-message" class="muted"></p>
+              <p id="source-details" class="muted"></p>
+            </section>
+            <section class="card">
+              <div class="head">
+                <h2>Bot diario</h2>
+                <span id="bot-tag" class="status neutral">sin ejecucion</span>
+              </div>
+              <div class="bot-controls">
+                <label>Intervalo (min)
+                  <input id="bot-interval" type="number" min="5" value="1440" />
+                </label>
+                <label class="toggle"><input id="bot-enabled" type="checkbox" checked />Activo</label>
+              </div>
+              <div class="row-actions">
+                <button class="primary" id="save-bot">Guardar configuracion</button>
+              </div>
+              <p id="bot-message" class="muted"></p>
+            </section>
+          </div>
+
+          <div class="grid two">
+            <section class="card">
+              <div class="head">
+                <h2>Procesos priorizados</h2>
+                <div class="filter-row">
+                  <input id="search-q" placeholder="Buscar proceso, juzgado o direccion" />
+                  <select id="risk-filter">
+                    <option value="">Todos</option>
+                    <option value="alto">Alto</option>
+                    <option value="medio">Medio</option>
+                    <option value="bajo">Bajo</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Proceso</th><th>Ciudad</th><th>Tipo</th><th>Estado</th><th>Riesgo</th></tr></thead>
+                  <tbody id="process-table"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="card">
+              <h2>Ejecuciones recientes</h2>
+              <div id="source-runs" class="events"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="live">
+          <section class="card">
+            <div class="head">
+              <h2>Consulta oficial en vivo</h2>
+              <span class="note">Si la fuente exige CAPTCHA queda en estado bloqueado para intervencion humana</span>
+            </div>
+            <form id="live-form" class="form-grid">
+              <input name="numero_proceso" placeholder="Numero de proceso" />
+              <input name="ciudad" placeholder="Ciudad" />
+              <input name="juzgado" placeholder="Juzgado" />
+              <select name="tipo_proceso">
+                <option value="">Tipo de proceso</option>
+                <option>Ejecutivo hipotecario</option>
+                <option>Ejecutivo singular</option>
+                <option>Divisorio</option>
+                <option>Restitucion de inmueble</option>
+                <option>Pertenencia</option>
+              </select>
+              <input name="limit" type="number" min="1" max="500" value="30" />
+              <button class="primary" type="submit">Consultar fuente oficial</button>
+            </form>
+            <p id="live-status" class="muted">Sin consulta activa.</p>
+            <div id="live-results" class="table-wrap"></div>
+          </section>
+        </section>
+
+        <section class="view" id="opportunities">
+          <section class="card">
+            <div class="head">
+              <h2>Top oportunidades</h2>
+              <div class="filter-row">
+                <label>Riesgo minimo
+                  <input id="op-min-score" type="number" min="1" max="99" value="70" />
+                </label>
+                <button id="load-opportunities">Calcular</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Proceso</th><th>Ciudad</th><th>Tipo</th><th>Estado</th><th>Avaluo</th><th>Riesgo</th></tr></thead>
+                <tbody id="opportunity-table"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="map">
+          <div class="grid two">
+            <section class="card">
+              <div class="head">
+                <h2>GIS de inmuebles en Colombia</h2>
+                <select id="city-filter"><option value="">Todas las ciudades</option></select>
+              </div>
+              <div class="map-board" id="map-canvas"></div>
+            </section>
+            <section class="card">
+              <h2>Detalle del inmueble</h2>
+              <div id="detail" class="detail">Selecciona un punto del mapa.</div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="alerts">
+          <section class="card">
+            <h2>Alertas</h2>
+            <div id="alerts-list" class="cards"></div>
+          </section>
+        </section>
+
+        <section class="view" id="watchlists">
+          <div class="grid two">
+            <section class="card">
+              <h2>Nueva watchlist</h2>
+              <form id="watchlist-form" class="form-grid">
+                <input name="name" placeholder="Nombre (ej. Remates Bogota)" required />
+                <input name="owner" placeholder="Equipo/usuario" value="equipo" required />
+                <input name="city" placeholder="Ciudad (opcional)" />
+                <select name="risk">
+                  <option value="">Riesgo</option>
+                  <option value="alto">alto</option>
+                  <option value="medio">medio</option>
+                  <option value="bajo">bajo</option>
+                </select>
+                <input name="status" placeholder="Estado contiene (opcional)" />
+                <input name="process_type" placeholder="Tipo contiene (opcional)" />
+                <input name="text" placeholder="Texto libre (opcional)" />
+                <input name="min_score" type="number" min="1" max="99" value="70" />
+                <button class="primary" type="submit">Crear watchlist</button>
+              </form>
+            </section>
+            <section class="card">
+              <h2>Watchlists activas</h2>
+              <div id="watchlists-list" class="events"></div>
+              <div id="watchlist-results" class="table-wrap"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="business">
+          <section class="card">
+            <h2>Proyeccion de negocio</h2>
+            <div class="business-grid">
+              <label>Clientes basico
+                <input id="biz-basic" type="number" min="0" value="100" />
+              </label>
+              <label>Clientes profesional
+                <input id="biz-pro" type="number" min="0" value="30" />
+              </label>
+              <label>Clientes empresarial
+                <input id="biz-enterprise" type="number" min="0" value="10" />
+              </label>
+              <label>Ticket enterprise (COP)
+                <input id="biz-ticket" type="number" min="1000000" step="100000" value="3000000" />
+              </label>
+            </div>
+            <div class="row-actions">
+              <button class="primary" id="biz-calc">Calcular MRR/ARR</button>
+            </div>
+            <div id="biz-result" class="kpi-grid kpi-business"></div>
+          </section>
+        </section>
+
+        <section class="view" id="processes">
+          <section class="card">
+            <h2>Registrar proceso</h2>
+            <form id="process-form" class="form-grid">
+              <input name="numero_proceso" placeholder="Numero de proceso" required />
+              <input name="juzgado" placeholder="Juzgado" />
+              <input name="ciudad" placeholder="Ciudad" required />
+              <input name="direccion" placeholder="Direccion del inmueble" required />
+              <select name="tipo_proceso"><option>Ejecutivo hipotecario</option><option>Ejecutivo singular</option><option>Divisorio</option><option>Restitucion de inmueble</option><option>Pertenencia</option></select>
+              <select name="estado"><option>Embargo inscrito</option><option>Avaluo aprobado</option><option>Secuestro</option><option>Audiencia</option><option>Remate fijado</option><option>Archivo</option></select>
+              <input name="avaluo" type="number" placeholder="Avaluo COP" />
+              <input name="edad_meses" type="number" placeholder="Edad (meses)" />
+              <input name="demandados" type="number" placeholder="Demandados" value="1" />
+              <input name="acreedores" type="number" placeholder="Acreedores" value="1" />
+              <input name="matricula_inmobiliaria" placeholder="Matricula inmobiliaria" />
+              <button class="primary" type="submit">Guardar</button>
+            </form>
+          </section>
+        </section>
+
+        <section class="view" id="import">
+          <section class="card">
+            <h2>Importar datos CSV</h2>
+            <p class="muted">Fuente oficial autorizada, expedientes propios o proveedor licenciado.</p>
+            <textarea id="csv-text" placeholder="numero_proceso,juzgado,ciudad,direccion,tipo_proceso,estado,avaluo,edad_meses,demandados,acreedores"></textarea>
+            <div class="row-actions">
+              <button class="primary" id="import-csv">Importar CSV</button>
+              <button id="load-sample">Cargar ejemplo</button>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <nav class="mobile-nav">
+      <button class="nav active" data-view="dashboard">Panel</button>
+      <button class="nav" data-view="live">Vivo</button>
+      <button class="nav" data-view="opportunities">Top</button>
+      <button class="nav" data-view="map">Mapa</button>
+      <button class="nav" data-view="alerts">Alertas</button>
+    </nav>
+
+    <div id="toast"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

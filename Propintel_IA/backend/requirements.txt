@@ -1,0 +1,7 @@
+# La version actual no requiere dependencias externas.
+# Para produccion recomendada:
+# fastapi
+# uvicorn[standard]
+# psycopg[binary]
+# pydantic
+# scikit-learn
