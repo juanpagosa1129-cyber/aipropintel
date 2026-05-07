@@ -356,7 +356,7 @@ export async function processOneJob(workerId = `web-${process.pid}`) {
 }
 
 export function startWorkerLoop() {
-  if (process.env.WORKER_ENABLED !== 'true') return;
+  if (process.env.WORKER_ENABLED !== 'false') return;
   const interval = Number(process.env.WORKER_INTERVAL_SECONDS || 60) * 1000;
   setInterval(async () => {
     try {
